@@ -13,6 +13,7 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="install.css" />
 </head>
 <body>
   <main id="screen-setup" class="screen active" aria-label="Inställningar">
@@ -40,22 +41,10 @@
       <section class="section" aria-labelledby="categories-heading">
         <h2 id="categories-heading" class="section-title">Kategorier</h2>
         <div class="categories">
-          <label class="category-label">
-            <input type="checkbox" id="cat-food" name="category" value="food" checked />
-            <span class="category-text">Mat och dryck</span>
-          </label>
-          <label class="category-label">
-            <input type="checkbox" id="cat-items" name="category" value="items" checked />
-            <span class="category-text">Vardagsföremål</span>
-          </label>
-          <label class="category-label">
-            <input type="checkbox" id="cat-sport" name="category" value="sport" />
-            <span class="category-text">Sport</span>
-          </label>
-          <label class="category-label">
-            <input type="checkbox" id="cat-weather" name="category" value="weather" />
-            <span class="category-text">Väder</span>
-          </label>
+          <label class="category-label"><input type="checkbox" id="cat-food" name="category" value="food" checked /><span class="category-text">Mat och dryck</span></label>
+          <label class="category-label"><input type="checkbox" id="cat-items" name="category" value="items" checked /><span class="category-text">Vardagsföremål</span></label>
+          <label class="category-label"><input type="checkbox" id="cat-sport" name="category" value="sport" /><span class="category-text">Sport</span></label>
+          <label class="category-label"><input type="checkbox" id="cat-weather" name="category" value="weather" /><span class="category-text">Väder</span></label>
         </div>
       </section>
 
@@ -68,13 +57,8 @@
     <div class="card-screen-inner">
       <p id="player-progress" class="progress-label" aria-live="polite"></p>
       <div id="card" class="card" role="button" tabindex="0" aria-label="Håll ned för att visa ditt kort">
-        <div class="card-front" aria-hidden="false">
-          <p id="card-player-name" class="card-name"></p>
-          <p class="card-instruction">Håll ned för att visa ditt kort</p>
-        </div>
-        <div class="card-back" aria-hidden="true">
-          <div id="card-back-content" class="card-back-content"></div>
-        </div>
+        <div class="card-front" aria-hidden="false"><p id="card-player-name" class="card-name"></p><p class="card-instruction">Håll ned för att visa ditt kort</p></div>
+        <div class="card-back" aria-hidden="true"><div id="card-back-content" class="card-back-content"></div></div>
       </div>
       <button id="next-btn" type="button" class="btn btn-primary btn-next" disabled aria-disabled="true">Nästa spelare</button>
     </div>
@@ -84,10 +68,7 @@
     <div class="final-inner">
       <h2 class="final-title">Nu börjar spelet!</h2>
       <p class="final-instructions">Diskutera det hemliga ordet utan att säga det direkt. Försök lista ut vem bedragaren är – och om du är bedragaren, försök att smälta in!</p>
-      <div class="starter-card">
-        <p class="starter-label">Första spelare</p>
-        <p id="starter-name" class="starter-name"></p>
-      </div>
+      <div class="starter-card"><p class="starter-label">Första spelare</p><p id="starter-name" class="starter-name"></p></div>
       <button id="play-again-btn" type="button" class="btn btn-primary btn-play-again" disabled aria-disabled="true">Spela igen</button>
     </div>
   </main>
