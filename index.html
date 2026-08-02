@@ -4,7 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Bedragaren – ett partysällskapsspel där en spelare är bedragaren." />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Bedragaren" />
   <title>Bedragaren</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,6 +21,15 @@
         <h1 class="title">Bedragaren</h1>
         <p class="subtitle">Vem är bedragaren?</p>
       </header>
+
+      <aside id="install-panel" class="install-panel" aria-labelledby="install-title" hidden>
+        <div class="install-copy">
+          <h2 id="install-title" class="install-title">Ha spelet på hemskärmen</h2>
+          <p id="install-text" class="install-text">Installera Bedragaren för snabbare åtkomst och möjlighet att spela utan internet.</p>
+        </div>
+        <button id="install-button" type="button" class="btn btn-primary install-button">Installera appen</button>
+        <button id="install-dismiss" type="button" class="install-dismiss">Inte nu</button>
+      </aside>
 
       <section class="section" aria-labelledby="players-heading">
         <h2 id="players-heading" class="section-title">Spelare</h2>
@@ -78,5 +94,6 @@
 
   <script src="app.js"></script>
   <script src="restart-delay.js"></script>
+  <script src="install.js"></script>
 </body>
 </html>
