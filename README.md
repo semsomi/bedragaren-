@@ -1,6 +1,6 @@
 # Bedragaren
 
-🎮 **Spela direkt:** [semsomi.github.io/bedragaren-](https://semsomi.github.io/bedragaren-/)
+🎮 **Spela direkt:** [semsomi.github.io/bedragaren](https://semsomi.github.io/bedragaren/)
 
 Ett mobilanpassat sällskapsspel på svenska, inspirerat av *Who’s the Impostor?* Spelet körs helt i webbläsaren och är gjort för att mobilen enkelt ska kunna skickas mellan spelarna.
 
