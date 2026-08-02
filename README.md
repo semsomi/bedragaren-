@@ -1,57 +1,58 @@
 # Bedragaren
 
-🎮 **Spela spelet:** [semsomi.github.io/bedragaren-](https://semsomi.github.io/bedragaren-/)
+🎮 **Spela direkt:** [semsomi.github.io/bedragaren-](https://semsomi.github.io/bedragaren-/)
 
-Ett mobilanpassat partysällskapsspel inspirerat av "Vem är bedragaren?" (Who's the Impostor?).
+Ett mobilanpassat sällskapsspel på svenska, inspirerat av *Who’s the Impostor?* Spelet körs helt i webbläsaren och är gjort för att mobilen enkelt ska kunna skickas mellan spelarna.
 
-## Om spelet
+## Så fungerar spelet
 
-Alla spelare utom en får ett hemligt ord. Den ena spelaren – **bedragaren** – känner inte till ordet, utan får i stället en **ledtråd** (ett enda ord). Under spelets gång diskuterar alla spelare ordet utan att säga det direkt. Målet är att lista ut vem bedragaren är – och bedragarens mål är att smälta in!
+Alla spelare utom en får samma hemliga ord. Den återstående spelaren är **bedragaren** och får i stället en ledtråd bestående av ett enda ord.
+
+När alla har sett sina kort börjar en slumpmässigt vald spelare samtalet. Gruppen diskuterar det hemliga ordet utan att säga det rakt ut. Målet är att lista ut vem bedragaren är, medan bedragaren försöker smälta in.
 
 ## Regler
 
-1. Lägg till minst 3 spelare.
-2. Välj en eller båda kategorier: **Mat och dryck** eller **Vardagsföremål**.
-3. Tryck **Spela**.
-4. Skicka telefonen runt. Varje spelare håller ned sin spelarkort för att se sin roll.
-5. En spelare är bedragaren och ser bara en ledtråd – inte det hemliga ordet.
-6. Alla övriga spelare ser det hemliga ordet.
-7. Diskutera ordet utan att säga det direkt.
-8. Rösta om vem ni tror är bedragaren.
-9. Avslöja bedragaren och se om ni hade rätt!
+1. Lägg till minst tre spelare.
+2. Välj kategorin **Mat och dryck**, **Vardagsföremål** eller båda.
+3. Tryck på **Spela**.
+4. Skicka mobilen till spelaren vars namn visas.
+5. Spelaren håller ned kortet för att se sitt ord eller sin ledtråd.
+6. När spelaren släpper döljs kortet igen.
+7. Tryck på **Nästa spelare** och fortsätt tills alla har sett sitt kort.
+8. Den utvalda första spelaren börjar samtalet.
+9. Diskutera, rösta och avslöja bedragaren.
 
-## Håll-för-att-visa (hold-to-reveal)
+## Håll ned för att visa
 
-Varje spelarkort visar bara spelarens namn tills spelaren håller ned fingret (eller klickar och håller in musknappen). Informationen visas **enbart** under tiden spelaren håller ned. Så snart spelaren släpper, drar undan fingret, byter app eller fliken tappar fokus döljs kortet automatiskt.
+Kortets innehåll visas bara medan spelaren håller ned fingret eller musknappen. Så snart spelaren släpper, byter flik, byter app eller fönstret tappar fokus döljs kortet automatiskt.
 
-### Tangentbord
-
-Fokusera kortet och håll in **Mellanslag** eller **Enter** för att visa. Släpp för att dölja.
+Med tangentbord kan kortet visas genom att hålla ned **Mellanslag** eller **Enter**.
 
 ## Ledtrådar
 
-Varje hemligt ord har exakt **ett** ledtrådsord. Ledtråden är ett enda svenskt ord – inga fraser eller meningar. Den är tillräckligt vag för att inte omedelbart avslöja ordet, men hjälper bedragaren att delta i diskussionen.
+Varje hemligt ord har exakt en ledtråd. Ledtråden är alltid ett enda svenskt ord: tillräckligt relevant för att hjälpa bedragaren delta, men tillräckligt vag för att inte avslöja svaret direkt.
 
-## Köra spelet lokalt
+## Skydd mot feltryck
 
-1. Klona eller ladda ned det här repositoriet.
-2. Öppna `index.html` direkt i en webbläsare (inga beroenden eller byggsteg behövs).
+På slutskärmen är **Spela igen** låst i fem sekunder. En nedräkning visas på knappen innan den går att trycka på, så att en ny omgång inte startas av misstag.
+
+## Köra lokalt
+
+Klona eller ladda ned repositoriet och öppna `index.html` direkt i en webbläsare. Inga beroenden, paket eller byggsteg behövs.
 
 ## Publicera med GitHub Pages
 
-1. Gå till **Settings → Pages** i ditt GitHub-repositorium.
-2. Under *Build and deployment*, välj **Deploy from a branch**.
+1. Öppna **Settings → Pages** i repositoriet.
+2. Välj **Deploy from a branch** under *Build and deployment*.
 3. Välj grenen **main** och mappen **/ (root)**.
-4. Spara. GitHub Pages publicerar automatiskt.
+4. Spara.
 
-Den publika adressen är normalt:
+Webbadressen blir normalt:
 
-```
+```text
 https://USERNAME.github.io/REPOSITORY-NAME/
 ```
 
-Ersätt `USERNAME` med ditt GitHub-användarnamn och `REPOSITORY-NAME` med repositoriets namn.
+## Integritet
 
-## Ingen backend – inga konton
-
-Spelet körs helt i webbläsaren. Det finns ingen server, ingen databas och inga konton. Spelarnamnen sparas i webbläsarens **localStorage** på den aktuella enheten och lämnar aldrig enheten.
+Spelet har ingen backend, databas, inloggning, analys eller externa API-anrop. Spelarnamnen sparas endast i webbläsarens `localStorage` på den aktuella enheten.
