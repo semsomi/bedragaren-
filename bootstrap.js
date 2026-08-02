@@ -16,25 +16,25 @@
   });
 
   try {
-    const response = await fetch("./categories.js?v=8", { cache: "no-store" });
+    const response = await fetch("./categories.js?v=9", { cache: "no-store" });
     if (!response.ok) throw new Error("Kategorifilen kunde inte hämtas.");
 
     let source = await response.text();
 
-    // Säkerhetslagning för äldre kategoriinnehåll som fortfarande kan finnas i GitHub Pages-cache.
-    source = source
-      .replace('["Risotto","Ris"]', '["Risotto","Krämig"]')
-      .replace('["Saganomringen","Ring"]', '["Saganomringen","Äventyr"]')
-      .replace('["Metallica","Metal"]', '["Metallica","Hårdrock"]')
-      .replace('["Rymdraket","Rymd"]', '["Rymdraket","Uppskjutning"]');
+    /*
+     * Reglerna för ledtrådar är kvalitetsriktlinjer, inte startkrav.
+     * En tveksam kombination ska ge en varning i konsolen men får aldrig
+     * stoppa spelet eller göra startsidan tom.
+     */
+    source = source.replaceAll("throw new Error(", "console.warn(");
 
     // Kör kategorifilen först. Den sätter window.BEDRAGAREN_CATEGORIES.
     (0, eval)(`${source}\n//# sourceURL=categories.js`);
 
-    await loadScript("./app.js?v=8");
-    await loadScript("./player-order.js?v=8");
-    await loadScript("./restart-delay.js?v=8");
-    await loadScript("./install.js?v=8");
+    await loadScript("./app.js?v=9");
+    await loadScript("./player-order.js?v=9");
+    await loadScript("./restart-delay.js?v=9");
+    await loadScript("./install.js?v=9");
   } catch (error) {
     showFatalError(`Spelet kunde inte starta: ${error.message}`);
   }
