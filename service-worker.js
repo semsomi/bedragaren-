@@ -1,4 +1,4 @@
-const CACHE_NAME = "bedragaren-v4";
+const CACHE_NAME = "bedragaren-v5";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -8,6 +8,7 @@ const APP_FILES = [
   "./install.css",
   "./categories.js",
   "./app.js",
+  "./player-order.js",
   "./restart-delay.js",
   "./install.js",
   "./manifest.webmanifest",
