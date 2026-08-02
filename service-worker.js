@@ -1,4 +1,4 @@
-const CACHE_NAME = "bedragaren-v5";
+const CACHE_NAME = "bedragaren-v6";
 const APP_FILES = [
   "./",
   "./index.html",
