@@ -8,10 +8,6 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <!-- ============================================================
-       SETUP SCREEN
-  ============================================================ -->
   <main id="screen-setup" class="screen active" aria-label="Inställningar">
     <div class="setup-inner">
       <header class="setup-header">
@@ -21,12 +17,8 @@
 
       <section class="section" aria-labelledby="players-heading">
         <h2 id="players-heading" class="section-title">Spelare</h2>
-        <ul id="player-list" class="player-list" aria-label="Spelarlista">
-          <!-- Player input rows injected by JS -->
-        </ul>
-        <button id="add-player-btn" type="button" class="btn btn-secondary btn-add">
-          + Lägg till spelare
-        </button>
+        <ul id="player-list" class="player-list" aria-label="Spelarlista"></ul>
+        <button id="add-player-btn" type="button" class="btn btn-secondary btn-add">+ Lägg till spelare</button>
       </section>
 
       <section class="section" aria-labelledby="categories-heading">
@@ -40,77 +32,47 @@
             <input type="checkbox" id="cat-items" name="category" value="items" checked />
             <span class="category-text">Vardagsföremål</span>
           </label>
+          <label class="category-label">
+            <input type="checkbox" id="cat-sport" name="category" value="sport" />
+            <span class="category-text">Sport</span>
+          </label>
+          <label class="category-label">
+            <input type="checkbox" id="cat-weather" name="category" value="weather" />
+            <span class="category-text">Väder</span>
+          </label>
         </div>
       </section>
 
-      <div
-        id="setup-error"
-        class="error-msg"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      ></div>
-
-      <button id="start-btn" type="button" class="btn btn-primary btn-start">
-        Spela
-      </button>
+      <div id="setup-error" class="error-msg" role="alert" aria-live="assertive" aria-atomic="true"></div>
+      <button id="start-btn" type="button" class="btn btn-primary btn-start">Spela</button>
     </div>
   </main>
 
-  <!-- ============================================================
-       PLAYER CARD SCREEN
-  ============================================================ -->
   <main id="screen-card" class="screen" aria-label="Spelarkort" hidden>
     <div class="card-screen-inner">
       <p id="player-progress" class="progress-label" aria-live="polite"></p>
-
-      <div
-        id="card"
-        class="card"
-        role="button"
-        tabindex="0"
-        aria-label="Håll ned för att visa ditt kort"
-      >
+      <div id="card" class="card" role="button" tabindex="0" aria-label="Håll ned för att visa ditt kort">
         <div class="card-front" aria-hidden="false">
           <p id="card-player-name" class="card-name"></p>
           <p class="card-instruction">Håll ned för att visa ditt kort</p>
         </div>
-
         <div class="card-back" aria-hidden="true">
           <div id="card-back-content" class="card-back-content"></div>
         </div>
       </div>
-
-      <button
-        id="next-btn"
-        type="button"
-        class="btn btn-primary btn-next"
-        disabled
-        aria-disabled="true"
-      >
-        Nästa spelare
-      </button>
+      <button id="next-btn" type="button" class="btn btn-primary btn-next" disabled aria-disabled="true">Nästa spelare</button>
     </div>
   </main>
 
-  <!-- ============================================================
-       FINAL SCREEN
-  ============================================================ -->
   <main id="screen-final" class="screen" aria-label="Spelstart" hidden>
     <div class="final-inner">
       <h2 class="final-title">Nu börjar spelet!</h2>
-      <p class="final-instructions">
-        Diskutera det hemliga ordet utan att säga det direkt. Försök lista ut vem bedragaren är – och om du är bedragaren, försök att smälta in!
-      </p>
-
+      <p class="final-instructions">Diskutera det hemliga ordet utan att säga det direkt. Försök lista ut vem bedragaren är – och om du är bedragaren, försök att smälta in!</p>
       <div class="starter-card">
         <p class="starter-label">Första spelare</p>
         <p id="starter-name" class="starter-name"></p>
       </div>
-
-      <button id="play-again-btn" type="button" class="btn btn-primary btn-play-again" disabled aria-disabled="true">
-        Spela igen
-      </button>
+      <button id="play-again-btn" type="button" class="btn btn-primary btn-play-again" disabled aria-disabled="true">Spela igen</button>
     </div>
   </main>
 
