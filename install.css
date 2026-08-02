@@ -1,0 +1,49 @@
+.install-panel {
+  position: relative;
+  display: grid;
+  gap: 0.875rem;
+  padding: 1.25rem;
+  background: #ffffff;
+  border: 2px solid #1a1a2e;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.install-panel[hidden] {
+  display: none;
+}
+
+.install-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+  line-height: 1.25;
+  color: #1a1a2e;
+}
+
+.install-text {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.45;
+  font-size: 0.95rem;
+}
+
+.install-button {
+  margin-top: 0.15rem;
+}
+
+.install-dismiss {
+  justify-self: center;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+}
+
+.install-dismiss:focus-visible {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 0.4rem;
+}
