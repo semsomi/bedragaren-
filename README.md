@@ -1,5 +1,7 @@
 # Bedragaren
 
+🎮 **Spela spelet:** [semsomi.github.io/bedragaren-](https://semsomi.github.io/bedragaren-/)
+
 Ett mobilanpassat partysällskapsspel inspirerat av "Vem är bedragaren?" (Who's the Impostor?).
 
 ## Om spelet
