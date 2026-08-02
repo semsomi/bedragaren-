@@ -1,5 +1,13 @@
 "use strict";
 
+/*
+ * REGLER FÖR ORD OCH LEDTRÅDAR
+ * - Varje ledtråd ska bestå av exakt ett ord.
+ * - Ledtråden får inte vara samma som det hemliga ordet.
+ * - Ledtråden får inte förekomma inuti det hemliga ordet.
+ *   Exempel: om ordet är "Anteckningsbok" får ledtråden inte vara "Bok".
+ * Kontrollfunktionen längst ned stoppar appen vid ogiltiga kombinationer.
+ */
 window.BEDRAGAREN_CATEGORIES = {
   food: { label: "Mat och dryck", emoji: "🍕", selected: true, words: [
     ["Pizza","Italien"],["Kaffe","Morgon"],["Sushi","Japan"],["Tacos","Mexiko"],["Glass","Sommar"],["Pannkakor","Lördag"],["Hamburgare","Bröd"],["Pasta","Sås"],["Choklad","Kakao"],["Te","Kopp"],["Pommes","Ketchup"],["Kebab","Grillat"],["Jordgubbar","Sommar"],["Lemonad","Citron"],["Popcorn","Bio"],["Soppa","Varm"],["Smörgås","Frukost"],["Våffla","Grädde"],["Sill","Midsommar"],["Köttbullar","Ikea"],["Kanelbulle","Fika"],["Lasagne","Ugn"],["Omelett","Ägg"],["Risotto","Ris"],["Smoothie","Frukt"],["Müsli","Yoghurt"],["Croissant","Paris"],["Nachos","Chips"],["Halloumi","Grillad"],["Avokado","Grön"]
@@ -38,10 +46,10 @@ window.BEDRAGAREN_CATEGORIES = {
     ["Vispa","Skål"],["Hacka","Kniv"],["Steka","Panna"],["Koka","Vatten"],["Grilla","Glöd"],["Baka","Ugn"],["Marinera","Smak"],["Krydda","Salt"],["Recept","Instruktion"],["Förkläde","Kök"],["Kastrull","Spis"],["Durkslag","Pasta"],["Slev","Soppa"],["Rivjärn","Ost"],["Mixer","Smoothie"],["Termometer","Temperatur"],["Deg","Mjöl"],["Sås","Tillbehör"],["Buljong","Tärning"],["Servera","Tallrik"]
   ]},
   movies: { label: "Filmer och TV-serier", emoji: "🎬", words: [
-    ["Titanic","Fartyg"],["Avatar","Blå"],["Frost","Elsa"],["Shrek","Träsk"],["Matrix","Piller"],["Joker","Skratt"],["Starwars","Rymd"],["Harrypotter","Trollstav"],["Saganomringen","Ring"],["Lejonkungen","Simba"],["Vänner","Soffa"],["Breakingbad","Kemi"],["Strangerthings","Uppochner"],["Gameofthrones","Drake"],["Theoffice","Kontor"],["Solsidan","Saltsjöbaden"],["Bron","Malmö"],["Bonusfamiljen","Relationer"],["Squidgame","Lekar"],["Wednesday","Flätor"]
+    ["Titanic","Fartyg"],["Avatar","Blå"],["Frost","Elsa"],["Shrek","Träsk"],["Matrix","Piller"],["Joker","Skratt"],["Starwars","Rymd"],["Harrypotter","Trollstav"],["Saganomringen","Äventyr"],["Lejonkungen","Simba"],["Vänner","Soffa"],["Breakingbad","Kemi"],["Strangerthings","Uppochner"],["Gameofthrones","Drake"],["Theoffice","Kontor"],["Solsidan","Saltsjöbaden"],["Bron","Malmö"],["Bonusfamiljen","Relationer"],["Squidgame","Lekar"],["Wednesday","Flätor"]
   ]},
   music: { label: "Musik och band", emoji: "🎵", words: [
-    ["Abba","Sverige"],["Beatles","Liverpool"],["Queen","Freddie"],["Metallica","Metal"],["Coldplay","Gul"],["Roxette","Sverige"],["Adele","Ballad"],["Beyonce","Queen"],["Eminem","Rap"],["Avicii","Dj"],["Mozart","Klassiskt"],["Elvis","Kung"],["Madonna","Pop"],["Drake","Kanada"],["Rihanna","Barbados"],["EdSheeran","Gitarr"],["TaylorSwift","Eras"],["BrunoMars","Scen"],["ZaraLarsson","Sverige"],["HåkanHellström","Göteborg"]
+    ["Abba","Sverige"],["Beatles","Liverpool"],["Queen","Freddie"],["Metallica","Hårdrock"],["Coldplay","Gul"],["Roxette","Sverige"],["Adele","Ballad"],["Beyonce","Queen"],["Eminem","Rap"],["Avicii","Dj"],["Mozart","Klassiskt"],["Elvis","Kung"],["Madonna","Pop"],["Drake","Kanada"],["Rihanna","Barbados"],["EdSheeran","Gitarr"],["TaylorSwift","Eras"],["BrunoMars","Scen"],["ZaraLarsson","Sverige"],["HåkanHellström","Göteborg"]
   ]},
   jobs: { label: "Yrken", emoji: "👔", words: [
     ["Läkare","Sjukhus"],["Lärare","Skola"],["Polis","Uniform"],["Brandman","Eld"],["Kock","Kök"],["Pilot","Flyg"],["Snickare","Trä"],["Elektriker","Ström"],["Frisör","Sax"],["Advokat","Domstol"],["Journalist","Nyheter"],["Fotograf","Kamera"],["Programmerare","Kod"],["Bonde","Gård"],["Tandläkare","Tänder"],["Arkitekt","Ritning"],["Mekaniker","Motor"],["Servitör","Restaurang"],["Skådespelare","Scen"],["Veterinär","Djur"]
@@ -56,13 +64,35 @@ window.BEDRAGAREN_CATEGORIES = {
     ["Superman","Krypton"],["Batman","Gotham"],["Spiderman","Nät"],["Hulken","Grön"],["Thor","Hammare"],["Ironman","Rustning"],["Wonderwoman","Lasso"],["Flash","Snabb"],["Aquaman","Hav"],["Wolverine","Klor"],["Deadpool","Mask"],["Blackpanther","Wakanda"],["Captainamerica","Sköld"],["Antman","Liten"],["Doctorstrange","Magi"],["Storm","Väder"],["Robin","Sidekick"],["Venom","Svart"],["Shazam","Blixt"],["Groot","Träd"]
   ]},
   transport: { label: "Transport", emoji: "🚗", words: [
-    ["Bil","Väg"],["Buss","Hållplats"],["Tåg","Räls"],["Flygplan","Himmel"],["Båt","Vatten"],["Cykel","Pedal"],["Motorcykel","Hjälm"],["Spårvagn","Stad"],["Tunnelbana","Underjord"],["Taxi","Mätare"],["Helikopter","Rotor"],["Sparkcykel","Styre"],["Färja","Överfart"],["Lastbil","Frakt"],["Traktor","Åker"],["Ambulans","Sirén"],["Brandbil","Eld"],["Ubåt","Djup"],["Luftballong","Korg"],["Rymdraket","Rymd"]
+    ["Bil","Väg"],["Buss","Hållplats"],["Tåg","Räls"],["Flygplan","Himmel"],["Båt","Vatten"],["Cykel","Pedal"],["Motorcykel","Hjälm"],["Spårvagn","Stad"],["Tunnelbana","Underjord"],["Taxi","Mätare"],["Helikopter","Rotor"],["Sparkcykel","Styre"],["Färja","Överfart"],["Lastbil","Frakt"],["Traktor","Åker"],["Ambulans","Sirén"],["Brandbil","Eld"],["Ubåt","Djup"],["Luftballong","Korg"],["Rymdraket","Uppskjutning"]
   ]},
   games: { label: "TV-spel", emoji: "🎮", words: [
     ["Minecraft","Block"],["Fortnite","Bygga"],["Mario","Rör"],["Zelda","Link"],["Tetris","Bitar"],["Fifa","Fotboll"],["Sims","Livet"],["Pokemon","Fånga"],["Roblox","Spelvärld"],["Gta","Stad"],["Amongus","Bedragare"],["Pacman","Spöken"],["Sonic","Snabb"],["Halo","Rymd"],["Overwatch","Hjältar"],["Callofduty","Krig"],["Skyrim","Drakar"],["Portal","Hål"],["Fallguys","Hinder"],["Counterstrike","Bomb"]
   ]}
 };
 
-for (const category of Object.values(window.BEDRAGAREN_CATEGORIES)) {
-  category.words = category.words.map(([word, hint]) => ({ word, hint }));
+function normalizeForHintCheck(value) {
+  return value
+    .normalize("NFC")
+    .toLocaleLowerCase("sv-SE")
+    .replace(/[\s\-–—_]/g, "");
+}
+
+for (const [categoryKey, category] of Object.entries(window.BEDRAGAREN_CATEGORIES)) {
+  category.words = category.words.map(([word, hint]) => {
+    const normalizedWord = normalizeForHintCheck(word);
+    const normalizedHint = normalizeForHintCheck(hint);
+
+    if (!word || !hint) {
+      throw new Error(`Kategori "${categoryKey}" innehåller ett ord eller en ledtråd som saknas.`);
+    }
+    if (/\s/.test(hint)) {
+      throw new Error(`Ledtråden "${hint}" till "${word}" måste bestå av exakt ett ord.`);
+    }
+    if (normalizedWord.includes(normalizedHint)) {
+      throw new Error(`Ledtråden "${hint}" får inte förekomma inuti det hemliga ordet "${word}".`);
+    }
+
+    return { word, hint };
+  });
 }
