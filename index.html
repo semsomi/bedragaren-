@@ -77,7 +77,6 @@
         </div>
 
         <div class="card-back" aria-hidden="true">
-          <!-- Content injected by JS during reveal only -->
           <div id="card-back-content" class="card-back-content"></div>
         </div>
       </div>
@@ -109,12 +108,13 @@
         <p id="starter-name" class="starter-name"></p>
       </div>
 
-      <button id="play-again-btn" type="button" class="btn btn-primary btn-play-again">
+      <button id="play-again-btn" type="button" class="btn btn-primary btn-play-again" disabled aria-disabled="true">
         Spela igen
       </button>
     </div>
   </main>
 
   <script src="app.js"></script>
+  <script src="restart-delay.js"></script>
 </body>
 </html>
