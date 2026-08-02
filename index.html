@@ -40,12 +40,8 @@
 
       <section class="section" aria-labelledby="categories-heading">
         <h2 id="categories-heading" class="section-title">Kategorier</h2>
-        <div class="categories">
-          <label class="category-label"><input type="checkbox" id="cat-food" name="category" value="food" checked /><span class="category-text">Mat och dryck</span></label>
-          <label class="category-label"><input type="checkbox" id="cat-items" name="category" value="items" checked /><span class="category-text">Vardagsföremål</span></label>
-          <label class="category-label"><input type="checkbox" id="cat-sport" name="category" value="sport" /><span class="category-text">Sport</span></label>
-          <label class="category-label"><input type="checkbox" id="cat-weather" name="category" value="weather" /><span class="category-text">Väder</span></label>
-        </div>
+        <p class="category-help">Välj en eller flera kategorier.</p>
+        <div id="category-list" class="categories"></div>
       </section>
 
       <div id="setup-error" class="error-msg" role="alert" aria-live="assertive" aria-atomic="true"></div>
@@ -73,6 +69,7 @@
     </div>
   </main>
 
+  <script src="categories.js"></script>
   <script src="app.js"></script>
   <script src="restart-delay.js"></script>
   <script src="install.js"></script>
