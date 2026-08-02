@@ -16,7 +16,7 @@
   });
 
   try {
-    const response = await fetch("./categories.js?v=9", { cache: "no-store" });
+    const response = await fetch("./categories.js?v=10", { cache: "no-store" });
     if (!response.ok) throw new Error("Kategorifilen kunde inte hämtas.");
 
     let source = await response.text();
@@ -28,13 +28,12 @@
      */
     source = source.replaceAll("throw new Error(", "console.warn(");
 
-    // Kör kategorifilen först. Den sätter window.BEDRAGAREN_CATEGORIES.
     (0, eval)(`${source}\n//# sourceURL=categories.js`);
 
-    await loadScript("./app.js?v=9");
-    await loadScript("./player-order.js?v=9");
-    await loadScript("./restart-delay.js?v=9");
-    await loadScript("./install.js?v=9");
+    // Spelarordningen hanteras redan direkt i app.js.
+    await loadScript("./app.js?v=10");
+    await loadScript("./restart-delay.js?v=10");
+    await loadScript("./install.js?v=10");
   } catch (error) {
     showFatalError(`Spelet kunde inte starta: ${error.message}`);
   }
