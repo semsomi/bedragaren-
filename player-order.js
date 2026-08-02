@@ -5,6 +5,7 @@
   if (!playerList) return;
 
   let draggedItem = null;
+  let activePointerId = null;
 
   function saveCurrentOrder() {
     const names = Array.from(playerList.querySelectorAll(".player-input"))
@@ -35,13 +36,43 @@
     }
     refreshButtons();
     saveCurrentOrder();
-    item.querySelector(".player-input")?.focus();
+  }
+
+  function moveDraggedItem(clientY) {
+    if (!draggedItem) return;
+
+    const otherItems = Array.from(playerList.querySelectorAll(".player-item"))
+      .filter(item => item !== draggedItem);
+
+    const itemBelow = otherItems.find(item => {
+      const rect = item.getBoundingClientRect();
+      return clientY < rect.top + rect.height / 2;
+    });
+
+    if (itemBelow) {
+      playerList.insertBefore(draggedItem, itemBelow);
+    } else {
+      playerList.appendChild(draggedItem);
+    }
+
+    refreshButtons();
+  }
+
+  function finishPointerDrag(event) {
+    if (!draggedItem) return;
+    if (event && activePointerId !== null && event.pointerId !== activePointerId) return;
+
+    draggedItem.classList.remove("player-dragging");
+    document.body.classList.remove("reordering-players");
+    draggedItem = null;
+    activePointerId = null;
+    refreshButtons();
+    saveCurrentOrder();
   }
 
   function decorateItem(item) {
     if (item.dataset.reorderReady === "true") return;
     item.dataset.reorderReady = "true";
-    item.draggable = true;
 
     const handle = document.createElement("button");
     handle.type = "button";
@@ -74,66 +105,26 @@
     down.addEventListener("click", () => moveItem(item, "down"));
 
     handle.addEventListener("pointerdown", event => {
-      if (event.pointerType === "mouse") return;
+      if (draggedItem) return;
       event.preventDefault();
+      event.stopPropagation();
+
       draggedItem = item;
+      activePointerId = event.pointerId;
       item.classList.add("player-dragging");
       document.body.classList.add("reordering-players");
-      try { handle.setPointerCapture(event.pointerId); } catch { /* ignore */ }
-    });
-
-    handle.addEventListener("pointermove", event => {
-      if (draggedItem !== item || event.pointerType === "mouse") return;
-      const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".player-item");
-      if (!target || target === item || target.parentElement !== playerList) return;
-
-      const rect = target.getBoundingClientRect();
-      const insertAfter = event.clientY > rect.top + rect.height / 2;
-      playerList.insertBefore(item, insertAfter ? target.nextElementSibling : target);
-      refreshButtons();
-    });
-
-    function finishTouchDrag(event) {
-      if (draggedItem !== item) return;
-      draggedItem = null;
-      item.classList.remove("player-dragging");
-      document.body.classList.remove("reordering-players");
-      try { handle.releasePointerCapture(event.pointerId); } catch { /* ignore */ }
-      refreshButtons();
-      saveCurrentOrder();
-    }
-
-    handle.addEventListener("pointerup", finishTouchDrag);
-    handle.addEventListener("pointercancel", finishTouchDrag);
-
-    item.addEventListener("dragstart", event => {
-      if (!event.target.closest(".player-drag-handle")) {
-        event.preventDefault();
-        return;
-      }
-      draggedItem = item;
-      item.classList.add("player-dragging");
-      event.dataTransfer.effectAllowed = "move";
-      event.dataTransfer.setData("text/plain", "player");
-    });
-
-    item.addEventListener("dragend", () => {
-      draggedItem = null;
-      item.classList.remove("player-dragging");
-      refreshButtons();
-      saveCurrentOrder();
     });
   }
 
-  playerList.addEventListener("dragover", event => {
-    if (!draggedItem) return;
+  document.addEventListener("pointermove", event => {
+    if (!draggedItem || event.pointerId !== activePointerId) return;
     event.preventDefault();
-    const target = event.target.closest(".player-item");
-    if (!target || target === draggedItem) return;
-    const rect = target.getBoundingClientRect();
-    const insertAfter = event.clientY > rect.top + rect.height / 2;
-    playerList.insertBefore(draggedItem, insertAfter ? target.nextElementSibling : target);
-  });
+    moveDraggedItem(event.clientY);
+  }, { passive: false });
+
+  document.addEventListener("pointerup", finishPointerDrag);
+  document.addEventListener("pointercancel", finishPointerDrag);
+  window.addEventListener("blur", () => finishPointerDrag());
 
   function decorateAll() {
     Array.from(playerList.children).forEach(decorateItem);
