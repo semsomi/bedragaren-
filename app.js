@@ -3,15 +3,11 @@
 const CATEGORIES = window.BEDRAGAREN_CATEGORIES;
 
 (function validateWordData() {
-  if (!CATEGORIES || typeof CATEGORIES !== "object") {
-    throw new Error("Kategorierna kunde inte laddas.");
-  }
-
+  if (!CATEGORIES || typeof CATEGORIES !== "object") throw new Error("Kategorierna kunde inte laddas.");
   for (const [categoryKey, category] of Object.entries(CATEGORIES)) {
     if (!category.label || !Array.isArray(category.words) || category.words.length < 20) {
       throw new Error(`Kategori ${categoryKey} är ofullständig.`);
     }
-
     const seen = new Set();
     for (const entry of category.words) {
       if (!entry.word || !entry.hint || /\s/.test(entry.hint)) {
@@ -79,10 +75,68 @@ let keyHeld = false;
 let cardRevealed = false;
 let currentPlayerHasRevealed = false;
 let nextBtnLocked = false;
+let draggedPlayer = null;
+let dragPointerId = null;
+
+function updatePlayerControls() {
+  const items = Array.from(playerList.children);
+  items.forEach((item, index) => {
+    const up = item.querySelector(".player-move-up");
+    const down = item.querySelector(".player-move-down");
+    up.disabled = index === 0;
+    down.disabled = index === items.length - 1;
+  });
+}
+
+function movePlayer(item, direction) {
+  if (direction < 0 && item.previousElementSibling) {
+    playerList.insertBefore(item, item.previousElementSibling);
+  } else if (direction > 0 && item.nextElementSibling) {
+    playerList.insertBefore(item.nextElementSibling, item);
+  }
+  updatePlayerControls();
+  item.querySelector(".player-input").focus();
+}
+
+function finishPlayerDrag() {
+  if (!draggedPlayer) return;
+  draggedPlayer.classList.remove("player-dragging");
+  draggedPlayer = null;
+  dragPointerId = null;
+  document.body.classList.remove("reordering-players");
+  updatePlayerControls();
+}
+
+function beginPlayerDrag(event, item, handle) {
+  if (draggedPlayer || event.button > 0) return;
+  event.preventDefault();
+  draggedPlayer = item;
+  dragPointerId = event.pointerId;
+  item.classList.add("player-dragging");
+  document.body.classList.add("reordering-players");
+  try { handle.setPointerCapture(event.pointerId); } catch { /* ignore */ }
+}
+
+function continuePlayerDrag(event) {
+  if (!draggedPlayer || event.pointerId !== dragPointerId) return;
+  event.preventDefault();
+  const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".player-item");
+  if (!target || target === draggedPlayer || target.parentElement !== playerList) return;
+  const rect = target.getBoundingClientRect();
+  const placeAfter = event.clientY > rect.top + rect.height / 2;
+  playerList.insertBefore(draggedPlayer, placeAfter ? target.nextElementSibling : target);
+}
 
 function createPlayerItem(name) {
   const item = document.createElement("li");
   item.className = "player-item";
+
+  const dragHandle = document.createElement("button");
+  dragHandle.type = "button";
+  dragHandle.className = "player-drag-handle";
+  dragHandle.setAttribute("aria-label", "Dra för att flytta spelaren");
+  dragHandle.title = "Dra för att ändra ordning";
+  dragHandle.textContent = "☰";
 
   const input = document.createElement("input");
   input.type = "text";
@@ -93,39 +147,62 @@ function createPlayerItem(name) {
   input.setAttribute("aria-label", "Spelarnamn");
   input.autocomplete = "off";
 
+  const moveButtons = document.createElement("div");
+  moveButtons.className = "player-move-buttons";
+
+  const upButton = document.createElement("button");
+  upButton.type = "button";
+  upButton.className = "player-order-btn player-move-up";
+  upButton.setAttribute("aria-label", "Flytta spelaren uppåt");
+  upButton.textContent = "↑";
+  upButton.addEventListener("click", () => movePlayer(item, -1));
+
+  const downButton = document.createElement("button");
+  downButton.type = "button";
+  downButton.className = "player-order-btn player-move-down";
+  downButton.setAttribute("aria-label", "Flytta spelaren nedåt");
+  downButton.textContent = "↓";
+  downButton.addEventListener("click", () => movePlayer(item, 1));
+
+  moveButtons.append(upButton, downButton);
+
   const removeButton = document.createElement("button");
   removeButton.type = "button";
   removeButton.className = "player-remove-btn";
   removeButton.setAttribute("aria-label", "Ta bort spelare");
   removeButton.textContent = "×";
-  removeButton.addEventListener("click", () => item.remove());
+  removeButton.addEventListener("click", () => {
+    item.remove();
+    updatePlayerControls();
+  });
 
-  item.append(input, removeButton);
+  dragHandle.addEventListener("pointerdown", event => beginPlayerDrag(event, item, dragHandle));
+  dragHandle.addEventListener("pointermove", continuePlayerDrag);
+  dragHandle.addEventListener("pointerup", finishPlayerDrag);
+  dragHandle.addEventListener("pointercancel", finishPlayerDrag);
+  dragHandle.addEventListener("lostpointercapture", finishPlayerDrag);
+
+  item.append(dragHandle, input, moveButtons, removeButton);
   return item;
 }
 
 function renderCategories() {
   categoryList.replaceChildren();
-
   for (const [key, category] of Object.entries(CATEGORIES)) {
     const label = document.createElement("label");
     label.className = "category-label";
-
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.name = "category";
     checkbox.value = key;
     checkbox.checked = category.selected === true;
-
     const emoji = document.createElement("span");
     emoji.className = "category-emoji";
     emoji.setAttribute("aria-hidden", "true");
     emoji.textContent = category.emoji || "🎲";
-
     const text = document.createElement("span");
     text.className = "category-text";
     text.textContent = category.label;
-
     label.append(checkbox, emoji, text);
     categoryList.appendChild(label);
   }
@@ -136,38 +213,36 @@ function initSetupScreen() {
   const names = loadStoredPlayers() || ["", "", ""];
   names.forEach(name => playerList.appendChild(createPlayerItem(name)));
   while (playerList.children.length < 3) playerList.appendChild(createPlayerItem(""));
+  updatePlayerControls();
 }
 
 el("add-player-btn").addEventListener("click", () => {
   const item = createPlayerItem("");
   playerList.appendChild(item);
+  updatePlayerControls();
   item.querySelector("input").focus();
 });
 
 function startGame() {
+  finishPlayerDrag();
   setText(setupError, "");
   const names = Array.from(playerList.querySelectorAll(".player-input"))
     .map(input => input.value.trim()).filter(Boolean);
-
   if (names.length < 3) {
     setText(setupError, "Du behöver minst 3 spelare för att spela.");
     return;
   }
-
   const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
     .map(input => input.value);
-
   if (!selectedCategories.length) {
     setText(setupError, "Välj minst en kategori.");
     return;
   }
-
   savePlayers(names);
   const wordPool = selectedCategories.flatMap(key => CATEGORIES[key].words);
   const secretEntry = wordPool[randomInt(wordPool.length)];
   const impostorIndex = randomInt(names.length);
   const players = shuffle(names.map((name, index) => ({ name, isImpostor: index === impostorIndex })));
-
   gameState = { secretWord: secretEntry.word, hint: secretEntry.hint, players, currentIndex: 0 };
   showScreen("screen-card");
   loadCurrentPlayer();
@@ -195,30 +270,14 @@ function loadCurrentPlayer() {
 
 function buildCardContent(player) {
   cardBackContent.replaceChildren();
-
   if (player.isImpostor) {
-    const badge = document.createElement("span");
-    badge.className = "impostor-badge";
-    badge.textContent = "Bedragaren";
-
-    const label = document.createElement("p");
-    label.className = "impostor-hint-label";
-    label.textContent = "Ledtråd";
-
-    const hint = document.createElement("p");
-    hint.className = "impostor-hint-word";
-    hint.textContent = gameState.hint;
-
+    const badge = document.createElement("span"); badge.className = "impostor-badge"; badge.textContent = "Bedragaren";
+    const label = document.createElement("p"); label.className = "impostor-hint-label"; label.textContent = "Ledtråd";
+    const hint = document.createElement("p"); hint.className = "impostor-hint-word"; hint.textContent = gameState.hint;
     cardBackContent.append(badge, label, hint);
   } else {
-    const label = document.createElement("p");
-    label.className = "reveal-label";
-    label.textContent = "Det hemliga ordet är";
-
-    const word = document.createElement("p");
-    word.className = "reveal-word";
-    word.textContent = gameState.secretWord;
-
+    const label = document.createElement("p"); label.className = "reveal-label"; label.textContent = "Det hemliga ordet är";
+    const word = document.createElement("p"); word.className = "reveal-word"; word.textContent = gameState.secretWord;
     cardBackContent.append(label, word);
   }
 }
@@ -257,33 +316,28 @@ card.addEventListener("pointerdown", event => {
   try { card.setPointerCapture(event.pointerId); } catch { /* ignore */ }
   revealCard();
 });
-
 card.addEventListener("pointerup", event => {
   if (event.pointerId !== activePointerId) return;
   activePointerId = null;
   try { card.releasePointerCapture(event.pointerId); } catch { /* ignore */ }
   hideCard();
 });
-
 card.addEventListener("pointercancel", event => {
   if (event.pointerId !== activePointerId) return;
   activePointerId = null;
   hideCard();
 });
-
 card.addEventListener("lostpointercapture", event => {
   if (event.pointerId !== activePointerId) return;
   activePointerId = null;
   hideCard();
 });
-
 card.addEventListener("pointerleave", event => {
   if (event.pointerId === activePointerId && !card.hasPointerCapture(event.pointerId)) {
     activePointerId = null;
     hideCard();
   }
 });
-
 card.addEventListener("keydown", event => {
   if ((event.key === " " || event.key === "Enter") && !keyHeld) {
     keyHeld = true;
@@ -291,7 +345,6 @@ card.addEventListener("keydown", event => {
     revealCard();
   }
 });
-
 card.addEventListener("keyup", event => {
   if (event.key === " " || event.key === "Enter") {
     keyHeld = false;
@@ -305,8 +358,16 @@ function forceHideCard() {
   hideCard();
 }
 
-window.addEventListener("blur", forceHideCard);
-document.addEventListener("visibilitychange", () => { if (document.hidden) forceHideCard(); });
+window.addEventListener("blur", () => {
+  finishPlayerDrag();
+  forceHideCard();
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    finishPlayerDrag();
+    forceHideCard();
+  }
+});
 card.addEventListener("contextmenu", event => event.preventDefault());
 card.addEventListener("dragstart", event => event.preventDefault());
 card.addEventListener("selectstart", event => event.preventDefault());
@@ -316,7 +377,6 @@ nextBtn.addEventListener("click", () => {
   nextBtnLocked = true;
   forceHideCard();
   gameState.currentIndex += 1;
-
   if (gameState.currentIndex >= gameState.players.length) {
     const names = gameState.players.map(player => player.name);
     setText(el("starter-name"), names[randomInt(names.length)]);
