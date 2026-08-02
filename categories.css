@@ -1,0 +1,40 @@
+.category-help {
+  margin-top: -0.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.categories {
+  max-height: 29rem;
+  overflow-y: auto;
+  padding: 0.2rem;
+  scrollbar-width: thin;
+}
+
+.category-label {
+  min-height: 3.75rem;
+}
+
+.category-emoji {
+  width: 2rem;
+  flex: 0 0 2rem;
+  text-align: center;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.category-text {
+  flex: 1;
+}
+
+@media (min-width: 760px) {
+  .setup-inner {
+    max-width: 700px;
+  }
+
+  .categories {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 32rem;
+  }
+}
