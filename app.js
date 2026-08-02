@@ -1,219 +1,166 @@
-/* ============================================================
-   BEDRAGAREN – app.js
-   A Swedish "Who is the Impostor?" party game.
-   Plain HTML/CSS/JS – no frameworks, no backend.
-============================================================ */
-
 "use strict";
 
-/* ============================================================
-   WORD DATA
-   Every entry: { word: "...", hint: "..." }
-   hint must be exactly one Swedish word (no spaces).
-============================================================ */
 const CATEGORIES = {
   food: {
     label: "Mat och dryck",
     words: [
-      { word: "Pizza",        hint: "Italien"      },
-      { word: "Kaffe",        hint: "Morgon"       },
-      { word: "Sushi",        hint: "Japan"        },
-      { word: "Tacos",        hint: "Mexiko"       },
-      { word: "Glass",        hint: "Sommar"       },
-      { word: "Pannkakor",    hint: "Lördag"       },
-      { word: "Hamburgare",   hint: "Bröd"         },
-      { word: "Pasta",        hint: "Sås"          },
-      { word: "Choklad",      hint: "Kakao"        },
-      { word: "Te",           hint: "Kopp"         },
-      { word: "Pommes",       hint: "Ketchup"      },
-      { word: "Kebab",        hint: "Grillat"      },
-      { word: "Jordgubbar",   hint: "Sommar"       },
-      { word: "Lemonad",      hint: "Citron"       },
-      { word: "Popcorn",      hint: "Bio"          },
-      { word: "Soppa",        hint: "Varm"         },
-      { word: "Smörgås",      hint: "Frukost"      },
-      { word: "Waffla",       hint: "Grädde"       },
-      { word: "Sill",         hint: "Midsommar"    },
-      { word: "Köttbullar",   hint: "Ikea"         },
-      { word: "Kanelbulle",   hint: "Fika"         },
-      { word: "Lasagne",      hint: "Ugn"          },
-      { word: "Omelett",      hint: "Ägg"          },
-      { word: "Risotto",      hint: "Ris"          },
-      { word: "Smoothie",     hint: "Frukt"        },
-      { word: "Müsli",        hint: "Yoghurt"      },
-      { word: "Croissant",    hint: "Paris"        },
-      { word: "Nachos",       hint: "Chips"        },
-      { word: "Halloumi",     hint: "Grillad"      },
-      { word: "Avokado",      hint: "Grön"         },
-      { word: "Mango",        hint: "Tropisk"      },
-      { word: "Blåbär",       hint: "Skog"         }
+      { word: "Pizza", hint: "Italien" }, { word: "Kaffe", hint: "Morgon" },
+      { word: "Sushi", hint: "Japan" }, { word: "Tacos", hint: "Mexiko" },
+      { word: "Glass", hint: "Sommar" }, { word: "Pannkakor", hint: "Lördag" },
+      { word: "Hamburgare", hint: "Bröd" }, { word: "Pasta", hint: "Sås" },
+      { word: "Choklad", hint: "Kakao" }, { word: "Te", hint: "Kopp" },
+      { word: "Pommes", hint: "Ketchup" }, { word: "Kebab", hint: "Grillat" },
+      { word: "Jordgubbar", hint: "Sommar" }, { word: "Lemonad", hint: "Citron" },
+      { word: "Popcorn", hint: "Bio" }, { word: "Soppa", hint: "Varm" },
+      { word: "Smörgås", hint: "Frukost" }, { word: "Våffla", hint: "Grädde" },
+      { word: "Sill", hint: "Midsommar" }, { word: "Köttbullar", hint: "Ikea" },
+      { word: "Kanelbulle", hint: "Fika" }, { word: "Lasagne", hint: "Ugn" },
+      { word: "Omelett", hint: "Ägg" }, { word: "Risotto", hint: "Ris" },
+      { word: "Smoothie", hint: "Frukt" }, { word: "Müsli", hint: "Yoghurt" },
+      { word: "Croissant", hint: "Paris" }, { word: "Nachos", hint: "Chips" },
+      { word: "Halloumi", hint: "Grillad" }, { word: "Avokado", hint: "Grön" },
+      { word: "Mango", hint: "Tropisk" }, { word: "Blåbär", hint: "Skog" }
     ]
   },
   items: {
     label: "Vardagsföremål",
     words: [
-      { word: "Tandborste",   hint: "Badrum"       },
-      { word: "Paraply",      hint: "Regn"         },
-      { word: "Fjärrkontroll",hint: "Soffa"        },
-      { word: "Nyckel",       hint: "Dörr"         },
-      { word: "Kudde",        hint: "Soffa"        },
-      { word: "Sax",          hint: "Klippa"       },
-      { word: "Laddare",      hint: "Batteri"      },
-      { word: "Stekpanna",    hint: "Spis"         },
-      { word: "Spegel",       hint: "Reflektion"   },
-      { word: "Ryggsäck",     hint: "Skola"        },
-      { word: "Klocka",       hint: "Tid"          },
-      { word: "Dammsugare",   hint: "Golv"         },
-      { word: "Glasögon",     hint: "Syn"          },
-      { word: "Handduk",      hint: "Dusch"        },
-      { word: "Penna",        hint: "Skriva"       },
-      { word: "Böcker",       hint: "Bibliotek"    },
-      { word: "Lampa",        hint: "Ljus"         },
-      { word: "Tallrik",      hint: "Mat"          },
-      { word: "Gaffel",       hint: "Middag"       },
-      { word: "Mugg",         hint: "Dryck"        },
-      { word: "Väska",        hint: "Handväska"    },
-      { word: "Kamera",       hint: "Foto"         },
-      { word: "Kalender",     hint: "Datum"        },
-      { word: "Linjal",       hint: "Mäta"         },
-      { word: "Pennfodral",   hint: "Skola"        },
-      { word: "Termos",       hint: "Kaffe"        },
-      { word: "Kniv",         hint: "Kök"          },
-      { word: "Korkskruv",    hint: "Flaska"       },
-      { word: "Skärbräda",    hint: "Kök"          },
-      { word: "Bestick",      hint: "Dukning"      },
-      { word: "Tvål",         hint: "Händer"       },
-      { word: "Resväska",     hint: "Semester"     }
+      { word: "Tandborste", hint: "Badrum" }, { word: "Paraply", hint: "Regn" },
+      { word: "Fjärrkontroll", hint: "Soffa" }, { word: "Nyckel", hint: "Dörr" },
+      { word: "Kudde", hint: "Sömn" }, { word: "Sax", hint: "Klippa" },
+      { word: "Laddare", hint: "Batteri" }, { word: "Stekpanna", hint: "Spis" },
+      { word: "Spegel", hint: "Reflektion" }, { word: "Ryggsäck", hint: "Skola" },
+      { word: "Klocka", hint: "Tid" }, { word: "Dammsugare", hint: "Golv" },
+      { word: "Glasögon", hint: "Syn" }, { word: "Handduk", hint: "Dusch" },
+      { word: "Penna", hint: "Skriva" }, { word: "Bok", hint: "Bibliotek" },
+      { word: "Lampa", hint: "Ljus" }, { word: "Tallrik", hint: "Mat" },
+      { word: "Gaffel", hint: "Middag" }, { word: "Mugg", hint: "Dryck" },
+      { word: "Väska", hint: "Bära" }, { word: "Kamera", hint: "Foto" },
+      { word: "Kalender", hint: "Datum" }, { word: "Linjal", hint: "Mäta" },
+      { word: "Pennfodral", hint: "Skola" }, { word: "Termos", hint: "Varm" },
+      { word: "Kniv", hint: "Kök" }, { word: "Korkskruv", hint: "Flaska" },
+      { word: "Skärbräda", hint: "Kök" }, { word: "Bestick", hint: "Dukning" },
+      { word: "Tvål", hint: "Händer" }, { word: "Resväska", hint: "Semester" }
+    ]
+  },
+  sport: {
+    label: "Sport",
+    words: [
+      { word: "Fotboll", hint: "Mål" }, { word: "Tennis", hint: "Racket" },
+      { word: "Basket", hint: "Korg" }, { word: "Ishockey", hint: "Puck" },
+      { word: "Handboll", hint: "Klister" }, { word: "Golf", hint: "Green" },
+      { word: "Simning", hint: "Bassäng" }, { word: "Boxning", hint: "Handskar" },
+      { word: "Skidåkning", hint: "Snö" }, { word: "Cykling", hint: "Pedal" },
+      { word: "Volleyboll", hint: "Nät" }, { word: "Bordtennis", hint: "Pingis" },
+      { word: "Friidrott", hint: "Stadion" }, { word: "Löpning", hint: "Tempo" },
+      { word: "Gymnastik", hint: "Matta" }, { word: "Ridning", hint: "Häst" },
+      { word: "Baseboll", hint: "Slagträ" }, { word: "Rugby", hint: "Tackling" },
+      { word: "Badminton", hint: "Fjäderboll" }, { word: "Klättring", hint: "Grepp" },
+      { word: "Bowling", hint: "Käglor" }, { word: "Fäktning", hint: "Värja" },
+      { word: "Dart", hint: "Tavla" }, { word: "Curling", hint: "Sopning" },
+      { word: "Surfing", hint: "Vågor" }, { word: "Segling", hint: "Vind" },
+      { word: "Judo", hint: "Kast" }, { word: "Padel", hint: "Glas" },
+      { word: "Motorsport", hint: "Bana" }, { word: "Tyngdlyftning", hint: "Skivstång" },
+      { word: "Orientering", hint: "Kompass" }, { word: "Triathlon", hint: "Uthållighet" }
+    ]
+  },
+  weather: {
+    label: "Väder",
+    words: [
+      { word: "Regn", hint: "Paraply" }, { word: "Snö", hint: "Vinter" },
+      { word: "Sol", hint: "Värme" }, { word: "Åska", hint: "Muller" },
+      { word: "Blixt", hint: "Ljus" }, { word: "Dimma", hint: "Sikt" },
+      { word: "Hagel", hint: "Is" }, { word: "Storm", hint: "Vind" },
+      { word: "Orkan", hint: "Virvel" }, { word: "Duggregn", hint: "Smådroppar" },
+      { word: "Skyfall", hint: "Översvämning" }, { word: "Värmebölja", hint: "Hetta" },
+      { word: "Frost", hint: "Morgon" }, { word: "Moln", hint: "Himmel" },
+      { word: "Regnbåge", hint: "Färger" }, { word: "Tornado", hint: "Tratt" },
+      { word: "Vind", hint: "Blåst" }, { word: "Bris", hint: "Svag" },
+      { word: "Minusgrader", hint: "Kyla" }, { word: "Luftfuktighet", hint: "Fukt" },
+      { word: "Högtryck", hint: "Klart" }, { word: "Lågtryck", hint: "Ostadigt" },
+      { word: "Väderprognos", hint: "Morgon" }, { word: "Is", hint: "Halka" },
+      { word: "Slask", hint: "Blött" }, { word: "Snöstorm", hint: "Sikt" },
+      { word: "Solnedgång", hint: "Kväll" }, { word: "Soluppgång", hint: "Gryning" },
+      { word: "Temperatur", hint: "Grader" }, { word: "Väderkvarn", hint: "Vind" },
+      { word: "Torka", hint: "Torrt" }, { word: "Norrsken", hint: "Natt" }
     ]
   }
 };
 
-/* ============================================================
-   DEVELOPMENT-TIME VALIDATION
-   Runs once on load; throws on any data error.
-============================================================ */
 (function validateWordData() {
   const MIN_ENTRIES = 30;
-  for (const [catKey, cat] of Object.entries(CATEGORIES)) {
-    if (cat.words.length < MIN_ENTRIES) {
-      throw new Error(`Kategori "${catKey}" har bara ${cat.words.length} ord (minst ${MIN_ENTRIES} krävs).`);
-    }
+  for (const [categoryKey, category] of Object.entries(CATEGORIES)) {
+    if (category.words.length < MIN_ENTRIES) throw new Error(`${categoryKey} har för få ord.`);
     const seen = new Set();
-    for (const entry of cat.words) {
-      if (!entry.word || typeof entry.word !== "string") {
-        throw new Error(`Felaktig post i "${catKey}": saknar ord.`);
+    for (const entry of category.words) {
+      if (!entry.word || !entry.hint || /\s/.test(entry.hint)) {
+        throw new Error(`Ogiltig post i ${categoryKey}: ${entry.word || "okänt ord"}`);
       }
-      if (!entry.hint || typeof entry.hint !== "string") {
-        throw new Error(`"${entry.word}" i "${catKey}": saknar ledtråd.`);
-      }
-      if (/\s/.test(entry.hint)) {
-        throw new Error(`"${entry.word}" i "${catKey}": ledtråden "${entry.hint}" innehåller mellanslag.`);
-      }
-      if (seen.has(entry.word.toLowerCase())) {
-        throw new Error(`Duplicerat ord "${entry.word}" i "${catKey}".`);
-      }
-      seen.add(entry.word.toLowerCase());
+      const normalized = entry.word.toLocaleLowerCase("sv");
+      if (seen.has(normalized)) throw new Error(`Duplicerat ord: ${entry.word}`);
+      seen.add(normalized);
     }
   }
 })();
 
-/* ============================================================
-   SECURE RANDOM HELPERS
-   Using crypto.getRandomValues for unbiased, unpredictable randomness.
-============================================================ */
-
-/** Returns a uniformly distributed random integer in [0, max). */
 function randomInt(max) {
   if (max <= 0) return 0;
   const limit = 0x100000000 - (0x100000000 % max);
-  const buf = new Uint32Array(1);
-  let value;
-  do {
-    crypto.getRandomValues(buf);
-    value = buf[0];
-  } while (value >= limit);
-  return value % max;
+  const values = new Uint32Array(1);
+  do crypto.getRandomValues(values); while (values[0] >= limit);
+  return values[0] % max;
 }
 
-/* ============================================================
-   FISHER–YATES SHUFFLE
-============================================================ */
 function shuffle(array) {
-  const arr = array.slice();
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = randomInt(i + 1);
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+  const copy = array.slice();
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const randomIndex = randomInt(index + 1);
+    [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
   }
-  return arr;
+  return copy;
 }
 
-/* ============================================================
-   LOCAL STORAGE HELPERS
-============================================================ */
 const STORAGE_KEY = "bedragaren_players";
+const el = id => document.getElementById(id);
+const setText = (element, text) => { element.textContent = text; };
 
 function loadStoredPlayers() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw);
-    if (Array.isArray(data) && data.every(n => typeof n === "string")) {
-      return data;
-    }
-    return null;
-  } catch {
-    return null;
-  }
+    const value = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return Array.isArray(value) && value.every(name => typeof name === "string") ? value : null;
+  } catch { return null; }
 }
 
 function savePlayers(names) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(names));
-  } catch {
-    /* Storage unavailable – silently ignore */
-  }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(names)); } catch { /* ignore */ }
 }
 
-/* ============================================================
-   DOM HELPERS
-============================================================ */
-function el(id) {
-  return document.getElementById(id);
-}
-
-/** Safely set text content (never innerHTML with user data). */
-function setText(element, text) {
-  element.textContent = text;
-}
-
-/** Show a screen, hide all others. */
 function showScreen(id) {
-  const screens = document.querySelectorAll(".screen");
-  screens.forEach(s => {
-    const isTarget = s.id === id;
-    s.classList.toggle("active", isTarget);
-    if (isTarget) {
-      s.removeAttribute("hidden");
-    } else {
-      s.setAttribute("hidden", "");
-    }
+  document.querySelectorAll(".screen").forEach(screen => {
+    const active = screen.id === id;
+    screen.classList.toggle("active", active);
+    screen.toggleAttribute("hidden", !active);
   });
 }
 
-/* ============================================================
-   SETUP SCREEN
-============================================================ */
 const playerList = el("player-list");
-const addPlayerBtn = el("add-player-btn");
-const startBtn = el("start-btn");
 const setupError = el("setup-error");
+const nextBtn = el("next-btn");
+const card = el("card");
+const cardFront = card.querySelector(".card-front");
+const cardBack = card.querySelector(".card-back");
+const cardBackContent = el("card-back-content");
 
-const DEFAULT_PLAYERS = ["", "", ""];
+let gameState = null;
+let activePointerId = null;
+let keyHeld = false;
+let cardRevealed = false;
+let currentPlayerHasRevealed = false;
+let nextBtnLocked = false;
 
 function createPlayerItem(name) {
-  const li = document.createElement("li");
-  li.className = "player-item";
-
+  const item = document.createElement("li");
+  item.className = "player-item";
   const input = document.createElement("input");
   input.type = "text";
   input.className = "player-input";
@@ -222,363 +169,184 @@ function createPlayerItem(name) {
   input.value = name;
   input.setAttribute("aria-label", "Spelarnamn");
   input.autocomplete = "off";
-  input.autocorrect = "off";
-  input.autocapitalize = "words";
-  input.spellcheck = false;
-
-  const removeBtn = document.createElement("button");
-  removeBtn.type = "button";
-  removeBtn.className = "player-remove-btn";
-  removeBtn.setAttribute("aria-label", "Ta bort spelare");
-  removeBtn.textContent = "×";
-  removeBtn.addEventListener("click", () => {
-    li.remove();
-  });
-
-  li.appendChild(input);
-  li.appendChild(removeBtn);
-  return li;
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "player-remove-btn";
+  removeButton.setAttribute("aria-label", "Ta bort spelare");
+  removeButton.textContent = "×";
+  removeButton.addEventListener("click", () => item.remove());
+  item.append(input, removeButton);
+  return item;
 }
 
 function initSetupScreen() {
-  playerList.innerHTML = "";
-
-  const stored = loadStoredPlayers();
-  const initialNames = (stored && stored.length >= 1) ? stored : DEFAULT_PLAYERS;
-
-  initialNames.forEach(name => {
-    playerList.appendChild(createPlayerItem(name));
-  });
-
-  // Ensure at least 3 rows
-  while (playerList.children.length < 3) {
-    playerList.appendChild(createPlayerItem(""));
-  }
+  playerList.replaceChildren();
+  const names = loadStoredPlayers() || ["", "", ""];
+  names.forEach(name => playerList.appendChild(createPlayerItem(name)));
+  while (playerList.children.length < 3) playerList.appendChild(createPlayerItem(""));
 }
 
-addPlayerBtn.addEventListener("click", () => {
+el("add-player-btn").addEventListener("click", () => {
   const item = createPlayerItem("");
   playerList.appendChild(item);
-  const input = item.querySelector("input");
-  input.focus();
+  item.querySelector("input").focus();
 });
 
-startBtn.addEventListener("click", startGame);
-
-function getPlayerNames() {
-  return Array.from(playerList.querySelectorAll(".player-input"))
-    .map(i => i.value.trim())
-    .filter(n => n.length > 0);
-}
-
-function showSetupError(msg) {
-  setText(setupError, msg);
-}
-
-function clearSetupError() {
-  setText(setupError, "");
-}
-
-/* ============================================================
-   GAME STATE
-============================================================ */
-let gameState = null;
-
 function startGame() {
-  clearSetupError();
+  setText(setupError, "");
+  const names = Array.from(playerList.querySelectorAll(".player-input"))
+    .map(input => input.value.trim()).filter(Boolean);
+  if (names.length < 3) return setText(setupError, "Du behöver minst 3 spelare för att spela.");
 
-  const names = getPlayerNames();
+  const categoryInputs = document.querySelectorAll('input[name="category"]:checked');
+  const selectedCategories = Array.from(categoryInputs).map(input => input.value);
+  if (!selectedCategories.length) return setText(setupError, "Välj minst en kategori.");
 
-  if (names.length < 3) {
-    showSetupError("Du behöver minst 3 spelare för att spela.");
-    return;
-  }
-
-  const selectedCats = [];
-  if (el("cat-food").checked) selectedCats.push("food");
-  if (el("cat-items").checked) selectedCats.push("items");
-
-  if (selectedCats.length === 0) {
-    showSetupError("Välj minst en kategori.");
-    return;
-  }
-
-  // Save names
   savePlayers(names);
-
-  // Build combined word pool
-  const wordPool = [];
-  selectedCats.forEach(catKey => {
-    wordPool.push(...CATEGORIES[catKey].words);
-  });
-
-  // Pick secret word
+  const wordPool = selectedCategories.flatMap(key => CATEGORIES[key].words);
   const secretEntry = wordPool[randomInt(wordPool.length)];
-
-  // Pick impostor
   const impostorIndex = randomInt(names.length);
-
-  // Randomize viewing order
-  const playerOrder = shuffle(names.map((name, i) => ({ name, isImpostor: i === impostorIndex })));
-
-  gameState = {
-    secretWord: secretEntry.word,
-    hint: secretEntry.hint,
-    players: playerOrder,
-    currentIndex: 0,
-    revealedCount: 0
-  };
-
-  showCardScreen();
-}
-
-/* ============================================================
-   CARD SCREEN
-============================================================ */
-const cardScreen = el("screen-card");
-const progressLabel = el("player-progress");
-const card = el("card");
-const cardFront = card.querySelector(".card-front");
-const cardBack = card.querySelector(".card-back");
-const cardPlayerName = el("card-player-name");
-const cardBackContent = el("card-back-content");
-const nextBtn = el("next-btn");
-
-// Hold-to-reveal state
-let activePointerId = null;
-let cardRevealed = false;
-let currentPlayerHasRevealed = false;
-let nextBtnLocked = false;
-
-function showCardScreen() {
+  const players = shuffle(names.map((name, index) => ({ name, isImpostor: index === impostorIndex })));
+  gameState = { secretWord: secretEntry.word, hint: secretEntry.hint, players, currentIndex: 0 };
   showScreen("screen-card");
   loadCurrentPlayer();
 }
 
-function loadCurrentPlayer() {
-  const { players, currentIndex } = gameState;
+el("start-btn").addEventListener("click", startGame);
 
+function loadCurrentPlayer() {
+  const player = gameState.players[gameState.currentIndex];
+  activePointerId = null;
+  keyHeld = false;
   cardRevealed = false;
   currentPlayerHasRevealed = false;
   nextBtnLocked = false;
-  activePointerId = null;
-
   card.classList.remove("revealed", "impostor-card");
-  cardBackContent.innerHTML = ""; // Clear back content – never shown until hold
+  cardBackContent.replaceChildren();
   cardFront.setAttribute("aria-hidden", "false");
   cardBack.setAttribute("aria-hidden", "true");
-
-  const player = players[currentIndex];
-
-  // Update progress
-  setText(progressLabel, `Spelare ${currentIndex + 1} av ${players.length}`);
-
-  // Show player name
-  setText(cardPlayerName, player.name);
-
-  // Disable next button
+  setText(el("player-progress"), `Spelare ${gameState.currentIndex + 1} av ${gameState.players.length}`);
+  setText(el("card-player-name"), player.name);
   nextBtn.disabled = true;
   nextBtn.setAttribute("aria-disabled", "true");
-
-  // Update card aria-label
   card.setAttribute("aria-label", `${player.name} – håll ned för att visa ditt kort`);
 }
 
 function buildCardContent(player) {
-  // Build DOM safely – never innerHTML with user/secret data exposed before reveal
-  cardBackContent.innerHTML = "";
-
+  cardBackContent.replaceChildren();
   if (player.isImpostor) {
-    const badge = document.createElement("span");
-    badge.className = "impostor-badge";
-    badge.textContent = "Bedragaren";
-
-    const hintLabel = document.createElement("p");
-    hintLabel.className = "impostor-hint-label";
-    hintLabel.textContent = "Ledtråd";
-
-    const hintWord = document.createElement("p");
-    hintWord.className = "impostor-hint-word";
-    hintWord.textContent = gameState.hint;
-
-    cardBackContent.appendChild(badge);
-    cardBackContent.appendChild(hintLabel);
-    cardBackContent.appendChild(hintWord);
+    const badge = document.createElement("span"); badge.className = "impostor-badge"; badge.textContent = "Bedragaren";
+    const label = document.createElement("p"); label.className = "impostor-hint-label"; label.textContent = "Ledtråd";
+    const hint = document.createElement("p"); hint.className = "impostor-hint-word"; hint.textContent = gameState.hint;
+    cardBackContent.append(badge, label, hint);
   } else {
-    const label = document.createElement("p");
-    label.className = "reveal-label";
-    label.textContent = "Det hemliga ordet är";
-
-    const word = document.createElement("p");
-    word.className = "reveal-word";
-    word.textContent = gameState.secretWord;
-
-    cardBackContent.appendChild(label);
-    cardBackContent.appendChild(word);
+    const label = document.createElement("p"); label.className = "reveal-label"; label.textContent = "Det hemliga ordet är";
+    const word = document.createElement("p"); word.className = "reveal-word"; word.textContent = gameState.secretWord;
+    cardBackContent.append(label, word);
   }
 }
 
 function revealCard() {
-  if (cardRevealed) return;
+  if (cardRevealed || !gameState) return;
   const player = gameState.players[gameState.currentIndex];
-
-  // Build content only at reveal time
   buildCardContent(player);
-
   cardRevealed = true;
   currentPlayerHasRevealed = true;
   card.classList.add("revealed");
-  if (player.isImpostor) {
-    card.classList.add("impostor-card");
-  }
+  if (player.isImpostor) card.classList.add("impostor-card");
   cardFront.setAttribute("aria-hidden", "true");
   cardBack.setAttribute("aria-hidden", "false");
   card.setAttribute("aria-label", `Kort avslöjat för ${player.name} – släpp för att dölja`);
 }
 
 function hideCard() {
-  if (!cardRevealed) return;
+  if (!cardRevealed || !gameState) return;
   cardRevealed = false;
   card.classList.remove("revealed", "impostor-card");
-  cardBackContent.innerHTML = ""; // Remove secret content from DOM
+  cardBackContent.replaceChildren();
   cardFront.setAttribute("aria-hidden", "false");
   cardBack.setAttribute("aria-hidden", "true");
   const player = gameState.players[gameState.currentIndex];
   card.setAttribute("aria-label", `${player.name} – håll ned för att visa ditt kort`);
-
-  // Enable next button only after at least one reveal
   if (currentPlayerHasRevealed) {
     nextBtn.disabled = false;
     nextBtn.setAttribute("aria-disabled", "false");
   }
 }
 
-/* ---- Pointer Events ---- */
-card.addEventListener("pointerdown", (e) => {
-  if (activePointerId !== null) return; // Ignore second pointer
-  activePointerId = e.pointerId;
-  try {
-    card.setPointerCapture(e.pointerId);
-  } catch {
-    /* ignore – not all environments support this */
-  }
+card.addEventListener("pointerdown", event => {
+  if (activePointerId !== null) return;
+  activePointerId = event.pointerId;
+  try { card.setPointerCapture(event.pointerId); } catch { /* ignore */ }
   revealCard();
 });
-
-card.addEventListener("pointerup", (e) => {
-  if (e.pointerId !== activePointerId) return;
+card.addEventListener("pointerup", event => {
+  if (event.pointerId !== activePointerId) return;
   activePointerId = null;
-  try {
-    card.releasePointerCapture(e.pointerId);
-  } catch { /* ignore */ }
+  try { card.releasePointerCapture(event.pointerId); } catch { /* ignore */ }
   hideCard();
 });
-
-card.addEventListener("pointercancel", (e) => {
-  if (e.pointerId !== activePointerId) return;
+card.addEventListener("pointercancel", event => {
+  if (event.pointerId !== activePointerId) return;
   activePointerId = null;
   hideCard();
 });
-
-card.addEventListener("pointerleave", (e) => {
-  if (e.pointerId !== activePointerId) return;
-  // Only hide if pointer leaves and it hasn't been captured
-  if (!card.hasPointerCapture(e.pointerId)) {
+card.addEventListener("lostpointercapture", event => {
+  if (event.pointerId !== activePointerId) return;
+  activePointerId = null;
+  hideCard();
+});
+card.addEventListener("pointerleave", event => {
+  if (event.pointerId === activePointerId && !card.hasPointerCapture(event.pointerId)) {
     activePointerId = null;
     hideCard();
   }
 });
-
-card.addEventListener("lostpointercapture", (e) => {
-  if (e.pointerId !== activePointerId) return;
-  activePointerId = null;
-  hideCard();
-});
-
-/* ---- Keyboard Support ---- */
-let keyHeld = false;
-card.addEventListener("keydown", (e) => {
-  if (e.key === " " || e.key === "Enter") {
-    if (keyHeld) return; // Prevent repeat
+card.addEventListener("keydown", event => {
+  if ((event.key === " " || event.key === "Enter") && !keyHeld) {
     keyHeld = true;
-    e.preventDefault();
+    event.preventDefault();
     revealCard();
   }
 });
-card.addEventListener("keyup", (e) => {
-  if (e.key === " " || e.key === "Enter") {
+card.addEventListener("keyup", event => {
+  if (event.key === " " || event.key === "Enter") {
     keyHeld = false;
     hideCard();
   }
 });
 
-/* ---- Hide on window blur / visibility change ---- */
-window.addEventListener("blur", () => {
+function forceHideCard() {
   activePointerId = null;
   keyHeld = false;
   hideCard();
-});
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    activePointerId = null;
-    keyHeld = false;
-    hideCard();
-  }
-});
+}
+window.addEventListener("blur", forceHideCard);
+document.addEventListener("visibilitychange", () => { if (document.hidden) forceHideCard(); });
+card.addEventListener("contextmenu", event => event.preventDefault());
+card.addEventListener("dragstart", event => event.preventDefault());
+card.addEventListener("selectstart", event => event.preventDefault());
 
-/* ---- Prevent context menu, text selection, image drag on card ---- */
-card.addEventListener("contextmenu", (e) => e.preventDefault());
-card.addEventListener("dragstart", (e) => e.preventDefault());
-card.addEventListener("selectstart", (e) => e.preventDefault());
-
-/* ---- Next player button ---- */
 nextBtn.addEventListener("click", () => {
-  if (nextBtnLocked) return;
-  if (nextBtn.disabled) return;
-
+  if (nextBtnLocked || nextBtn.disabled) return;
   nextBtnLocked = true;
-
-  // Ensure card is hidden first
-  activePointerId = null;
-  keyHeld = false;
-  hideCard();
-
-  gameState.currentIndex++;
-
+  forceHideCard();
+  gameState.currentIndex += 1;
   if (gameState.currentIndex >= gameState.players.length) {
-    showFinalScreen();
+    const names = gameState.players.map(player => player.name);
+    setText(el("starter-name"), names[randomInt(names.length)]);
+    showScreen("screen-final");
   } else {
     loadCurrentPlayer();
-    nextBtnLocked = false;
   }
 });
 
-/* ============================================================
-   FINAL SCREEN
-============================================================ */
-const starterName = el("starter-name");
-const playAgainBtn = el("play-again-btn");
-
-function showFinalScreen() {
-  // Pick a random conversation starter from original player order
-  const allNames = gameState.players.map(p => p.name);
-  const starter = allNames[randomInt(allNames.length)];
-
-  setText(starterName, starter);
-  showScreen("screen-final");
-}
-
-playAgainBtn.addEventListener("click", () => {
+el("play-again-btn").addEventListener("click", () => {
   gameState = null;
-  clearSetupError();
+  setText(setupError, "");
   initSetupScreen();
   showScreen("screen-setup");
 });
 
-/* ============================================================
-   INIT
-============================================================ */
-(function init() {
-  initSetupScreen();
-  showScreen("screen-setup");
-})();
+initSetupScreen();
+showScreen("screen-setup");
