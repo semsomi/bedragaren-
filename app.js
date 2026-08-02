@@ -118,12 +118,30 @@ const CATEGORIES = {
 })();
 
 /* ============================================================
+   SECURE RANDOM HELPERS
+   Using crypto.getRandomValues for unbiased, unpredictable randomness.
+============================================================ */
+
+/** Returns a uniformly distributed random integer in [0, max). */
+function randomInt(max) {
+  if (max <= 0) return 0;
+  const limit = 0x100000000 - (0x100000000 % max);
+  const buf = new Uint32Array(1);
+  let value;
+  do {
+    crypto.getRandomValues(buf);
+    value = buf[0];
+  } while (value >= limit);
+  return value % max;
+}
+
+/* ============================================================
    FISHER–YATES SHUFFLE
 ============================================================ */
 function shuffle(array) {
   const arr = array.slice();
   for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = randomInt(i + 1);
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
@@ -295,10 +313,10 @@ function startGame() {
   });
 
   // Pick secret word
-  const secretEntry = wordPool[Math.floor(Math.random() * wordPool.length)];
+  const secretEntry = wordPool[randomInt(wordPool.length)];
 
   // Pick impostor
-  const impostorIndex = Math.floor(Math.random() * names.length);
+  const impostorIndex = randomInt(names.length);
 
   // Randomize viewing order
   const playerOrder = shuffle(names.map((name, i) => ({ name, isImpostor: i === impostorIndex })));
@@ -544,7 +562,7 @@ const playAgainBtn = el("play-again-btn");
 function showFinalScreen() {
   // Pick a random conversation starter from original player order
   const allNames = gameState.players.map(p => p.name);
-  const starter = allNames[Math.floor(Math.random() * allNames.length)];
+  const starter = allNames[randomInt(allNames.length)];
 
   setText(starterName, starter);
   showScreen("screen-final");
