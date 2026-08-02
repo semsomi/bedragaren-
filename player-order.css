@@ -1,0 +1,78 @@
+.player-item {
+  position: relative;
+}
+
+.player-drag-handle,
+.player-order-btn {
+  border: none;
+  background: var(--color-secondary);
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  cursor: grab;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.player-drag-handle {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 2.5rem;
+  border-radius: 0.65rem;
+  font-size: 1.1rem;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.player-drag-handle:active {
+  cursor: grabbing;
+}
+
+.player-move-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.player-order-btn {
+  width: 1.85rem;
+  height: 1.15rem;
+  border-radius: 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.player-order-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.player-drag-handle:focus-visible,
+.player-order-btn:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.player-item.player-dragging {
+  z-index: 10;
+  opacity: 0.8;
+  transform: scale(1.02);
+  background: var(--color-surface);
+  border-radius: var(--radius-input);
+  box-shadow: var(--shadow-card);
+}
+
+.reordering-players {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (max-width: 420px) {
+  .player-move-buttons {
+    display: none;
+  }
+
+  .player-input {
+    min-width: 0;
+  }
+}
