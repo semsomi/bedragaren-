@@ -1,4 +1,4 @@
-const CACHE_NAME = "bedragaren-v7";
+const CACHE_NAME = "bedragaren-v8";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -6,8 +6,8 @@ const APP_FILES = [
   "./player-order.css",
   "./categories.css",
   "./install.css",
+  "./bootstrap.js",
   "./categories.js",
-  "./categories-repair.js",
   "./app.js",
   "./player-order.js",
   "./restart-delay.js",
@@ -32,11 +32,32 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
+
+  const requestUrl = new URL(event.request.url);
+  const isDocument = event.request.mode === "navigate";
+
+  if (isDocument) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put("./index.html", copy));
+          return response;
+        })
+        .catch(() => caches.match("./index.html"))
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-      const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-      return response;
-    }).catch(() => caches.match("./index.html")))
+    fetch(event.request)
+      .then(response => {
+        if (requestUrl.origin === self.location.origin) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
