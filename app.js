@@ -120,11 +120,17 @@ function beginPlayerDrag(event, item, handle) {
 function continuePlayerDrag(event) {
   if (!draggedPlayer || event.pointerId !== dragPointerId) return;
   event.preventDefault();
-  const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".player-item");
-  if (!target || target === draggedPlayer || target.parentElement !== playerList) return;
-  const rect = target.getBoundingClientRect();
-  const placeAfter = event.clientY > rect.top + rect.height / 2;
-  playerList.insertBefore(draggedPlayer, placeAfter ? target.nextElementSibling : target);
+  const otherItems = Array.from(playerList.children).filter(item => item !== draggedPlayer);
+  const itemBelow = otherItems.find(item => {
+    const rect = item.getBoundingClientRect();
+    return event.clientY < rect.top + rect.height / 2;
+  });
+  if (itemBelow) {
+    playerList.insertBefore(draggedPlayer, itemBelow);
+  } else {
+    playerList.appendChild(draggedPlayer);
+  }
+  updatePlayerControls();
 }
 
 function createPlayerItem(name) {
@@ -177,10 +183,6 @@ function createPlayerItem(name) {
   });
 
   dragHandle.addEventListener("pointerdown", event => beginPlayerDrag(event, item, dragHandle));
-  dragHandle.addEventListener("pointermove", continuePlayerDrag);
-  dragHandle.addEventListener("pointerup", finishPlayerDrag);
-  dragHandle.addEventListener("pointercancel", finishPlayerDrag);
-  dragHandle.addEventListener("lostpointercapture", finishPlayerDrag);
 
   item.append(dragHandle, input, moveButtons, removeButton);
   return item;
@@ -357,6 +359,11 @@ function forceHideCard() {
   keyHeld = false;
   hideCard();
 }
+
+document.addEventListener("pointermove", continuePlayerDrag, { passive: false });
+document.addEventListener("pointerup", finishPlayerDrag);
+document.addEventListener("pointercancel", finishPlayerDrag);
+document.addEventListener("lostpointercapture", finishPlayerDrag);
 
 window.addEventListener("blur", () => {
   finishPlayerDrag();
