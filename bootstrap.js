@@ -1,7 +1,8 @@
 "use strict";
 
 (async () => {
-  const VERSION = "12";
+  const VERSION = "13";
+  const CATEGORY_STORAGE_KEY = "bedragaren_categories";
 
   const showFatalError = message => {
     const error = document.getElementById("setup-error");
@@ -23,23 +24,38 @@
     return response.text();
   };
 
+  const restoreCategorySelection = () => {
+    const checkboxes = Array.from(document.querySelectorAll('input[name="category"]'));
+    const validKeys = new Set(checkboxes.map(input => input.value));
+
+    try {
+      const stored = JSON.parse(localStorage.getItem(CATEGORY_STORAGE_KEY));
+      if (Array.isArray(stored)) {
+        const selected = new Set(stored.filter(key => validKeys.has(key)));
+        checkboxes.forEach(input => { input.checked = selected.has(input.value); });
+      }
+    } catch {
+      // Behåll standardvalen om lagrad data är trasig eller otillgänglig.
+    }
+
+    const saveSelection = () => {
+      const selected = checkboxes.filter(input => input.checked).map(input => input.value);
+      try { localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(selected)); } catch { /* ignore */ }
+    };
+
+    checkboxes.forEach(input => input.addEventListener("change", saveSelection));
+  };
+
   try {
     let categorySource = await fetchText("./categories.js");
 
-    /*
-     * Reglerna för ledtrådar är kvalitetsriktlinjer, inte startkrav.
-     * En tveksam kombination ska ge en varning i konsolen men får aldrig
-     * stoppa spelet eller göra startsidan tom.
-     */
+    /* Ledtrådsregler är kvalitetsriktlinjer och får aldrig stoppa spelet. */
     categorySource = categorySource.replaceAll("throw new Error(", "console.warn(");
     (0, eval)(`${categorySource}\n//# sourceURL=categories.js`);
 
     let appSource = await fetchText("./app.js");
 
-    /*
-     * Spelarna ska visas i exakt den ordning som användaren har lagt dem i.
-     * Bedragaren slumpas fortfarande, men spelarlistan får inte blandas.
-     */
+    /* Följ exakt spelarordningen från startsidan. */
     const shuffledPlayers = "const players = shuffle(names.map((name, index) => ({ name, isImpostor: index === impostorIndex })));";
     const orderedPlayers = "const players = names.map((name, index) => ({ name, isImpostor: index === impostorIndex }));";
 
@@ -49,6 +65,8 @@
 
     appSource = appSource.replace(shuffledPlayers, orderedPlayers);
     (0, eval)(`${appSource}\n//# sourceURL=app.js`);
+
+    restoreCategorySelection();
 
     await loadScript(`./player-controls-cleanup.js?v=${VERSION}`);
     await loadScript(`./restart-delay.js?v=${VERSION}`);
